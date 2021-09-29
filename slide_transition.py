@@ -1,7 +1,11 @@
 import bpy
 
 
-def createTransition(context, axis="VERTICAL"):
+def preprocess_transition(context):
+    """
+    Check that the number of strip is appropriate and extract relevant
+    information
+    """
     if len(context.selected_sequences) != 2:
         return None
 
@@ -11,6 +15,16 @@ def createTransition(context, axis="VERTICAL"):
     frame_start = seq1.frame_final_start
     frame_end = seq2.frame_final_end
 
+    return (seq1, seq2, frame_start, frame_end)
+
+
+def createTransition(context, axis="x"):
+
+    seq1, seq2, frame_start, frame_end = preprocess_transition(context)
+
+    if not (seq1 and seq2 and frame_start and frame_end):
+        return {'FINISHED'}
+
     transform = bpy.context.scene.sequence_editor.sequences.new_effect(
         name=seq2.name + ".tr",
         type='TRANSFORM',
@@ -19,14 +33,9 @@ def createTransition(context, axis="VERTICAL"):
         frame_end=frame_end,
         seq1=seq2)
 
-    if axis == "VERTICAL":
-        transform.keyframe_insert("translate_start_y", -1, frame_start)
-        transform.translate_start_y = -100
-        transform.keyframe_insert("translate_start_y", -1, frame_end)
-    else:
-        transform.keyframe_insert("translate_start_x", -1, frame_start)
-        transform.translate_start_x = -100
-        transform.keyframe_insert("translate_start_x", -1, frame_end)
+    transform.keyframe_insert("translate_start_" + axis, -1, frame_start)
+    transform.translate_start_y = -100
+    transform.keyframe_insert("translate_start_" + axis, -1, frame_end)
 
     alpa_under = bpy.context.scene.sequence_editor.sequences.new_effect(
         name=seq2.name + ".au",
@@ -47,7 +56,7 @@ class VerticalSlideTransitionOperator(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        createTransition(context=context, axis="VERTICAL")
+        createTransition(context=context, axis="y")
 
         return {'FINISHED'}
 
@@ -59,6 +68,6 @@ class HorizontalSlideTransitionOperator(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        createTransition(context=context, axis="HORIZONTAL")
+        createTransition(context=context, axis="x")
 
         return {'FINISHED'}
