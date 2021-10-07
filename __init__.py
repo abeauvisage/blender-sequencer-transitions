@@ -47,4 +47,4 @@ def unregister():
     bpy.types.SEQUENCER_MT_add_transitions.remove(menu_func)
 
     for op in OTHER_OPERATORS:
-        bpy.utils.register_class(op)
+        bpy.utils.unregister_class(op)
