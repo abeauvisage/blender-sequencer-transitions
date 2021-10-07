@@ -3,6 +3,7 @@ import bpy
 from .slide_transition import (VerticalSlideTransitionOperator,
                                HorizontalSlideTransitionOperator)
 from .blurry_transition import BlurryTransitionOperator
+from .blurry_slide_transition import BlurrySlideTransitionOperator
 from .proxy_25_operator import Proxy25Operator
 
 bl_info = {
@@ -15,6 +16,7 @@ LIST_TRANSITION_OPERATORS = [
     VerticalSlideTransitionOperator,
     HorizontalSlideTransitionOperator,
     BlurryTransitionOperator,
+    BlurrySlideTransitionOperator,
 ]
 
 OTHER_OPERATORS = [
